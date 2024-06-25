@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sekolah_app/Teacher%20Android/ProfileTeacher.dart';
 
 void main() {
   runApp(MyAccountTeacher());
@@ -23,6 +24,15 @@ class MyAccountScreenTeacher extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Account'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfileTeacher()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
@@ -37,20 +47,20 @@ class MyAccountScreenTeacher extends StatelessWidget {
                     backgroundImage: AssetImage('images/Profile.png'), // Replace with user's profile image
                   ),
                   SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Functionality to change profile picture
-                      // Implement your logic here
-                    },
-                    child: Text('Change Profile Picture'),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     // Functionality to change profile picture
+                  //     // Implement your logic here
+                  //   },
+                  //   child: Text('Change Profile Picture'),
+                  // ),
                 ],
               ),
             ),
             SizedBox(height: 20),
             buildTextField('Username', 'Kevin'), // Replace with user data
             buildTextField('Role', 'Teacher'), // Replace with user data
-            buildTextField('Wali Kelas', '10A'), // Replace with user data
+            buildTextField('Wali Kelas', 'X IPA 2'), // Replace with user data
             buildTextField('Email', 'Kevin@example.com'), // Replace with user data
             buildTextField('Phone Number', '123-456-7890'), // Replace with user data
             buildTextField('Gender', 'Male'), // Replace with user data

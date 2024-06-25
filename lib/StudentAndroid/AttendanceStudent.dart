@@ -118,7 +118,7 @@ class _AttendanceStudentState extends State<AttendanceStudent> {
                     Text(
                       attendance == "Masuk"
                           ? "Attendance Complete !!"
-                          : "Attendance Not Yet Completed !! Please Check with your homeroom teacher !!",
+                          : "Attendance Not Yet Completed For Today !! Please Check with your homeroom teacher !!",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,

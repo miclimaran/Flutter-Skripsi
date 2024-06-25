@@ -16,7 +16,8 @@ class ProfileStudent extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Profile'),leading: IconButton(
+          title: Text('Profile'),
+          leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.push(
@@ -76,16 +77,16 @@ class ProfileStudentContent extends StatelessWidget {
             label: Text('My Account'),
             style: ElevatedButton.styleFrom(primary: Colors.transparent, onPrimary: Colors.black),
           ),
-          ElevatedButton.icon(
-            onPressed: () {
-              // TODO: Navigate to About App screen
-              // Replace the above line with navigation to your About App screen
-              print('Navigate to About App');
-            },
-            icon: Icon(Icons.info),
-            label: Text('About App'),
-            style: ElevatedButton.styleFrom(primary: Colors.transparent, onPrimary: Colors.black),
-          ),
+          // ElevatedButton.icon(
+          //   onPressed: () {
+          //     // TODO: Navigate to About App screen
+          //     // Replace the above line with navigation to your About App screen
+          //     print('Navigate to About App');
+          //   },
+          //   icon: Icon(Icons.info),
+          //   label: Text('About App'),
+          //   style: ElevatedButton.styleFrom(primary: Colors.transparent, onPrimary: Colors.black),
+          // ),
           ElevatedButton.icon(
             onPressed: () {
               FirebaseAuth.instance.signOut();

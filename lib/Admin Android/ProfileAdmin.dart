@@ -124,14 +124,14 @@ fetchStudentDetails();
             label: Text('My Account'),
             style: ElevatedButton.styleFrom(primary: Colors.transparent, onPrimary: Colors.black),
           ),
-          ElevatedButton.icon(
-            onPressed: () {
-              print('Navigate to About App');
-            },
-            icon: Icon(Icons.info),
-            label: Text('About App'),
-            style: ElevatedButton.styleFrom(primary: Colors.transparent, onPrimary: Colors.black),
-          ),
+          // ElevatedButton.icon(
+          //   onPressed: () {
+          //     print('Navigate to About App');
+          //   },
+          //   icon: Icon(Icons.info),
+          //   label: Text('About App'),
+          //   style: ElevatedButton.styleFrom(primary: Colors.transparent, onPrimary: Colors.black),
+          // ),
           ElevatedButton.icon(
             onPressed: () {
               FirebaseAuth.instance.signOut();

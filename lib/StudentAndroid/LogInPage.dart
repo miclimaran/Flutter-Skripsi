@@ -96,34 +96,34 @@ class LoginPageState extends State<LoginPage> {
               ),
               Row(
                 children: <Widget>[
-                  Checkbox(
-                    value: _rememberMe,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _rememberMe = value ?? false;
-                      });
-                    },
-                  ),
-                  Text(
-                    'Remember Me',
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                    ),
-                  ),
+                  // Checkbox(
+                  //   value: _rememberMe,
+                  //   onChanged: (bool? value) {
+                  //     setState(() {
+                  //       _rememberMe = value ?? false;
+                  //     });
+                  //   },
+                  // ),
+                  // Text(
+                  //   'Remember Me',
+                  //   style: TextStyle(
+                  //     fontFamily: 'Montserrat',
+                  //   ),
+                  // ),
                   Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/verificationEmail');
-                      print('Forgot Password button pressed');
-                    },
-                    child: Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        fontFamily: 'Montserrat',
-                        color: Color(0xFF8F8F8F),
-                      ),
-                    ),
-                  ),
+                  // TextButton(
+                  //   onPressed: () {
+                  //     Navigator.pushNamed(context, '/verificationEmail');
+                  //     print('Forgot Password button pressed');
+                  //   },
+                  //   child: Text(
+                  //     'Forgot Password?',
+                  //     style: TextStyle(
+                  //       fontFamily: 'Montserrat',
+                  //       color: Color(0xFF8F8F8F),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               SizedBox(height: 20.0),
@@ -185,20 +185,50 @@ class LoginPageState extends State<LoginPage> {
     } 
   }
 
+// void getRoleFromEmail(String email) {
+//   if (email.endsWith('@student.ac.id')) {
+//     emailType = 'student';
+//     Navigator.pushNamed(context, "/Homepage2", arguments: emailName);
+//   } else if (email.endsWith('@teacher.ac.id')) {
+//     emailType = 'teacher';
+//     Navigator.pushNamed(context, "/HomepageTeacher", arguments: emailName);
+//   } else if (email.endsWith('@admin.ac.id')) {
+//     emailType = 'admin';
+//     Navigator.pushNamed(context, "/HomepageAdmin", arguments: emailName);
+//   } else {
+//       showToast(message: "Some error occurred");
+//     }
+// }
+
 void getRoleFromEmail(String email) {
-  if (email.endsWith('@student.ac.id')) {
-    emailType = 'student';
-    Navigator.pushNamed(context, "/Homepage2", arguments: emailName);
-  } else if (email.endsWith('@teacher.ac.id')) {
-    emailType = 'teacher';
-    Navigator.pushNamed(context, "/HomepageTeacher", arguments: emailName);
-  } else if (email.endsWith('@admin.ac.id')) {
-    emailType = 'admin';
-    Navigator.pushNamed(context, "/HomepageAdmin", arguments: emailName);
-  } else {
+    if (email.endsWith('@student.ac.id')) {
+      emailType = 'student';
+      // Navigator.pushNamed(context, "/Homepage2", arguments: emailName);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => Homepage2()),
+      );
+    } else if (email.endsWith('@teacher.ac.id')) {
+      emailType = 'teacher';
+      // Navigator.pushNamed(context, "/HomepageTeacher", arguments: emailName);
+      // Navigator.of(context, rootNavigator: true)
+      //     .pushNamed("/", arguments: emailName);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomepageTeacher()),
+      );
+      // print("disini");
+    } else if (email.endsWith('@admin.ac.id')) {
+      emailType = 'admin';
+      // Navigator.pushNamed(context, "/HomepageAdmin", arguments: emailName);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomepageAdmin()),
+      );
+    } else {
       showToast(message: "Some error occurred");
     }
-}
+  }
 
 
 String getNameEmail(String email) {

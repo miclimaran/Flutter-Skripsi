@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sekolah_app/StudentAndroid/Homepage2.dart';
+import 'package:sekolah_app/StudentAndroid/ProfileStudent.dart';
 
 void main() {
   runApp(MyAccountStudent());
@@ -9,6 +11,7 @@ class MyAccountStudent extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My Account',
+
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -23,12 +26,22 @@ class MyAccountScreenStudent extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Account'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfileStudent()),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            
             Center(
               child: Column(
                 children: [
@@ -72,6 +85,7 @@ class MyAccountScreenStudent extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          
           SizedBox(
             width: 120,
             child: Text(

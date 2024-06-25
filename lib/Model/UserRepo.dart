@@ -458,6 +458,21 @@ Future<List<String>> getAllClassroom() async {
 
     return classroomlist;
   }
+
+   Future<void> addStudent(String name, String email, String id, String className, String role) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').add({
+        'name': name,
+        'email': email,
+        'id': id,
+        'class': className,
+        'role': role,
+      });
+      print('Student added successfully');
+    } catch (e) {
+      print('Error adding student: $e');
+    }
+  }
   
 }
 
