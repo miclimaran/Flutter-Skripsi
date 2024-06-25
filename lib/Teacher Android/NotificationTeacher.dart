@@ -1,68 +1,100 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
-  runApp(NotificationTeacher());
+  runApp(MyApp());
 }
 
-class NotificationTeacher extends StatelessWidget {
-  final List<Map<String, dynamic>> notifications = [
-    {
-      'senderName': 'Admin Office',
-      'senderImage': 'images/Profile.png',
-      'notification': 'Reminder: School event tomorrow at 10 AM.'
-    },
-    {
-      'senderName': 'Admin Office',
-      'senderImage': 'images/Profile.png',
-      'notification': 'Please submit attendance by 2 PM.'
-    },
-  ];
-
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Notification Page',
+      title: 'Announcement Page',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Notifications'),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        body: ListView.builder(
-          itemCount: notifications.length,
+      home: NotificationTeacher(),
+    );
+  }
+}
+
+class NotificationTeacher extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Announcements'),
+      ),
+      body: NotificationList(),
+    );
+  }
+}
+
+class NotificationList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('Announcement').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        List<QueryDocumentSnapshot> documents = snapshot.data!.docs;
+
+        if (documents.isEmpty) {
+          return Center(child: Text('No Announcements available'));
+        }
+
+        return ListView.builder(
+          itemCount: documents.length,
           itemBuilder: (context, index) {
             return NotificationBox(
-              senderName: notifications[index]['senderName'],
-              senderImage: notifications[index]['senderImage'],
-              notification: notifications[index]['notification'],
+              adminId: documents[index]['adminId'],
+              announcement: documents[index]['announcement'],
+              date: documents[index]['date'],
             );
           },
-        ),
-      ),
+        );
+      },
     );
   }
 }
 
 class NotificationBox extends StatelessWidget {
-  final String senderName;
-  final String senderImage;
-  final String notification;
+  final String adminId;
+  final String announcement;
+  final dynamic date; // Use dynamic to handle both Timestamp and String
 
   NotificationBox({
-    required this.senderName,
-    required this.senderImage,
-    required this.notification,
+    required this.adminId,
+    required this.announcement,
+    required this.date,
   });
+
+  DateTime _parseDate(dynamic date) {
+    if (date is Timestamp) {
+      return date.toDate();
+    } else if (date is String) {
+      try {
+        return DateFormat('dd-MM-yyyy').parse(date);
+      } catch (e) {
+        return DateTime.now(); // Fallback to current date if parsing fails
+      }
+    } else {
+      return DateTime.now(); // Fallback to current date
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    DateTime parsedDate = _parseDate(date);
+
     return Card(
       margin: EdgeInsets.all(10),
       color: Color(0xFF3D73EB),
@@ -74,12 +106,12 @@ class NotificationBox extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: AssetImage(senderImage),
+                  backgroundImage: AssetImage('images/Profile.png'),
                   radius: 25,
                 ),
                 SizedBox(width: 10),
                 Text(
-                  senderName,
+                  adminId,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -90,7 +122,15 @@ class NotificationBox extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              notification,
+              announcement,
+              style: TextStyle(
+                fontSize: 12,
+                color: Color(0xFFFFFFFF),
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Date: ${DateFormat('dd-MM-yyyy').format(parsedDate)}',
               style: TextStyle(
                 fontSize: 12,
                 color: Color(0xFFFFFFFF),

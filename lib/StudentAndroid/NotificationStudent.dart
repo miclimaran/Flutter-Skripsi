@@ -1,33 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() {
   runApp(NotificationStudent());
 }
 
-class NotificationStudent extends StatelessWidget {
-  final List<Map<String, dynamic>> notifications = [
-    {
-      'senderName': 'Admin Office',
-      'senderImage': 'images/Profile.png',
-      'notification': 'Reminder: School event tomorrow at 10 AM.'
-    },
-    {
-      'senderName': 'Admin Office',
-      'senderImage': 'images/Profile.png',
-      'notification': 'Please submit attendance by 2 PM.'
-    },
-  ];
+class NotificationStudent extends StatefulWidget {
+  @override
+  _NotificationStudentState createState() => _NotificationStudentState();
+}
+
+class _NotificationStudentState extends State<NotificationStudent> {
+  late Stream<List<Map<String, dynamic>>> _notificationsStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationsStream = fetchNotifications();
+  }
+
+  Stream<List<Map<String, dynamic>>> fetchNotifications() {
+    return FirebaseFirestore.instance.collection('Announcement').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return {
+          'adminId': doc['adminId'],
+          'announcement': doc['announcement'],
+          'date': doc['date'],
+        };
+      }).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Notification Page',
+      title: 'Announcement Page',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Notifications'),
+          title: Text('Announcement'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
@@ -35,13 +49,32 @@ class NotificationStudent extends StatelessWidget {
             },
           ),
         ),
-        body: ListView.builder(
-          itemCount: notifications.length,
-          itemBuilder: (context, index) {
-            return NotificationBox(
-              senderName: notifications[index]['senderName'],
-              senderImage: notifications[index]['senderImage'],
-              notification: notifications[index]['notification'],
+        body: StreamBuilder<List<Map<String, dynamic>>>(
+          stream: _notificationsStream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            List<Map<String, dynamic>> notifications = snapshot.data ?? [];
+
+            if (notifications.isEmpty) {
+              return Center(child: Text('No Announcement Available'));
+            }
+
+            return ListView.builder(
+              itemCount: notifications.length,
+              itemBuilder: (context, index) {
+                return NotificationBox(
+                  adminId: notifications[index]['adminId'],
+                  announcement: notifications[index]['announcement'],
+                  date: notifications[index]['date'],
+                );
+              },
             );
           },
         ),
@@ -51,18 +84,25 @@ class NotificationStudent extends StatelessWidget {
 }
 
 class NotificationBox extends StatelessWidget {
-  final String senderName;
-  final String senderImage;
-  final String notification;
+  final String adminId;
+  final String announcement;
+  final String date;
 
   NotificationBox({
-    required this.senderName,
-    required this.senderImage,
-    required this.notification,
+    required this.adminId,
+    required this.announcement,
+    required this.date,
   });
 
   @override
   Widget build(BuildContext context) {
+    DateTime parsedDate;
+    try {
+      parsedDate = DateFormat('dd-MM-yyyy').parse(date);
+    } catch (e) {
+      parsedDate = DateTime.now(); // Provide a default fallback date if parsing fails
+    }
+
     return Card(
       margin: EdgeInsets.all(10),
       color: Color(0xFF3D73EB),
@@ -74,12 +114,12 @@ class NotificationBox extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: AssetImage(senderImage),
+                  backgroundImage: AssetImage('images/Profile.png'),
                   radius: 25,
                 ),
                 SizedBox(width: 10),
                 Text(
-                  senderName,
+                  adminId,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
@@ -90,7 +130,15 @@ class NotificationBox extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              notification,
+              announcement,
+              style: TextStyle(
+                fontSize: 12,
+                color: Color(0xFFFFFFFF),
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              '${DateFormat('dd-MM-yyyy').format(parsedDate)}',
               style: TextStyle(
                 fontSize: 12,
                 color: Color(0xFFFFFFFF),

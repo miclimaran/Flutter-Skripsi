@@ -143,17 +143,17 @@ class HomepageAdmin extends StatelessWidget {
                     // Action for notification button
                   },
                   icon: Image.asset(
-                      'images/BigHomeWhite.png'), // Replace with your notification icon asset
+                      'images/HomeButtonWhite.png'), // Replace with your notification icon asset
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(builder: (context) => AnnouncementPage()),
-                //     );
-                //   },
-                //   icon: Image.asset('images/AnnoucementButtonWhite.png'), // Replace with your profile icon asset
-                // ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => AnnouncementPage()),
+                    );
+                  },
+                  icon: Image.asset('images/AnnoucementButtonWhite.png'), // Replace with your profile icon asset
+                ),
                 IconButton(
                   onPressed: () {
                     Navigator.push(

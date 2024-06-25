@@ -522,3 +522,28 @@ Future<List<String>> getAllClassroom() async {
 //       );
 //   }
 // ),
+
+
+
+Future<String> getStudentNamebyIdss(String id) async {
+  String studentName = "";
+
+  print(id);
+
+  try {
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('id', isEqualTo: id)
+        .get();
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> user in snapshot.docs) {
+      studentName = user['id'] as String;
+    }
+  } catch (e) {
+    print('Error fetching student classes: $e');
+  }
+
+  print(studentName);
+
+  return studentName;
+}

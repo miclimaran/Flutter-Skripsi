@@ -172,15 +172,15 @@ return Scaffold(
                   },
                   icon: Image.asset('images/CalendarButtonWhite.png'), // Replace with your schedule icon asset
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(builder: (context) => NotificationStudent()),
-                //     );
-                //   },
-                //   icon: Image.asset('images/ScheduleButtonWhite.png'), // Replace with your notification icon asset
-                // ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => NotificationStudent()),
+                    );
+                  },
+                  icon: Image.asset('images/ScheduleButtonWhite.png'), // Replace with your notification icon asset
+                ),
                 IconButton(
                   onPressed: () {
                     Navigator.push(

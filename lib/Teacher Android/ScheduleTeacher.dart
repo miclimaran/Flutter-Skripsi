@@ -124,4 +124,5 @@ class _SchedulePageState extends State<SchedulePage> {
     {'time': '01:00 PM', 'lecture': 'Kimia', 'class': 'Class XII IPA 1'},
     {'time': '03:00 PM', 'lecture': 'Sejarah', 'class': 'Class XI IPA 3'},
   ];
+  
 }

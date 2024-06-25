@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sekolah_app/Model/DataUser.dart';
 import 'package:sekolah_app/Model/UserRepo.dart';
@@ -19,7 +20,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   @override
   void initState() {
     super.initState();
-    // Fetch classroom names when the widget is created
+    // Fetch admin ID when the widget is created
     fetchAdminID();
   }
 
@@ -34,40 +35,31 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
   Future<void> sendAnnouncement() async {
     if (announcementController.text.isEmpty) {
-      // Show error if the announcement is not provided
       _showErrorSnackBar('Please write the announcement!');
       return;
     }
 
-    if ((selectedCategory == 'Guru' || selectedCategory == 'Murid') &&
-        recipients.isEmpty) {
-      // Show error if recipients are not chosen for Guru or Murid category
+    if ((selectedCategory == 'Guru' || selectedCategory == 'Murid') && recipients.isEmpty) {
       _showErrorSnackBar('Please choose recipients individually!');
       return;
     }
 
-    // Replace 'your_collection' with your actual Firestore collection name
-    final CollectionReference announcements =
-        FirebaseFirestore.instance.collection('Announcement');
-
-    // Simulated adminId, replace with actual admin ID
+    final CollectionReference announcements = FirebaseFirestore.instance.collection('Announcement');
     String adminId = adminIds;
+    String currentDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
-    // Prepare data to be sent to Firestore
     Map<String, dynamic> data = {
       'adminId': adminId,
       'announcement': announcementController.text,
+      'date': currentDate,
       'recipient': recipients.join(', '), // Join recipients into a single string
     };
 
-    // Add the data to Firestore
     await announcements.add(data);
 
-    // Clear the text field after sending the announcement
     announcementController.clear();
     recipients.clear();
 
-    // Show a snackbar to indicate success
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Announcement Sent!'),
@@ -76,15 +68,12 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   }
 
   Future<void> _showRecipientsDialog(BuildContext context) async {
-    // Simulated data, replace with actual data fetching logic
     UserRepo userRepo = UserRepo();
     List<String> allStudentName = await userRepo.getAllStudent();
     List<String> allTeacherName = await userRepo.getAllTeacher();
 
     List<String> allRecipients =
         selectedCategory == 'Guru' ? allTeacherName : allStudentName;
-
-    bool isGuru = selectedCategory == 'Guru';
 
     await showDialog(
       context: context,
@@ -127,7 +116,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
             TextButton(
               onPressed: () {
                 if (recipients.isEmpty) {
-                  // Show error if no recipients are chosen
                   _showErrorSnackBar('Please choose at least one recipient!');
                 } else {
                   Navigator.of(context).pop();
@@ -161,27 +149,25 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            DropdownButton<String>(
-              value: selectedCategory,
-              onChanged: (newValue) {
-                setState(() {
-                  selectedCategory = newValue!;
-                  recipients.clear(); // Clear recipients when category changes
-                });
-              },
-              items: [
-                'Semua',
-                'Semua Guru',
-                'Semua Murid',
-                'Guru',
-                'Murid',
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
+            // DropdownButton<String>(
+            //   value: selectedCategory,
+            //   onChanged: (newValue) {
+            //     setState(() {
+            //       selectedCategory = newValue!;
+            //       recipients.clear(); // Clear recipients when category changes
+            //     });
+            //   },
+            //   items: [
+            //     'Semua',
+            //     'Guru',
+            //     'Murid',
+            //   ].map<DropdownMenuItem<String>>((String value) {
+            //     return DropdownMenuItem<String>(
+            //       value: value,
+            //       child: Text(value),
+            //     );
+            //   }).toList(),
+            // ),
             SizedBox(height: 20),
             if (selectedCategory == 'Guru' || selectedCategory == 'Murid') ...[
               ElevatedButton(
@@ -205,7 +191,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
               onPressed: () {
                 sendAnnouncement();
               },
-              child: Text('Send Announcement'),
+              child: Text('Send Announcement to all'),
             ),
           ],
         ),

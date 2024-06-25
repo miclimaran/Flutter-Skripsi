@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // For date and time formatting
+import 'package:intl/intl.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:sekolah_app/Model/DataUser.dart';
 import 'package:sekolah_app/Teacher%20Android/AbsenTeacher.dart';
 import 'package:sekolah_app/Teacher%20Android/FeedbackTeacher.dart';
 import 'package:sekolah_app/Teacher%20Android/NotificationTeacher.dart';
 import 'package:sekolah_app/Teacher%20Android/ProfileTeacher.dart';
-import 'package:sekolah_app/Teacher%20Android/ScheduleTeacher.dart'; // Import carousel_slider package
+import 'package:sekolah_app/Teacher%20Android/ScheduleTeacher.dart';
+import 'package:sekolah_app/Model/UserRepo.dart';
 
 void main() {
   runApp(HomepageTeacherTop());
@@ -42,9 +44,30 @@ class HomepageTeacherTop extends StatelessWidget {
   }
 }
 
-class HomepageTeacher extends StatelessWidget {
+class HomepageTeacher extends StatefulWidget {
+  @override
+  _HomepageTeacherState createState() => _HomepageTeacherState();
+}
+
+class _HomepageTeacherState extends State<HomepageTeacher> {
   final String username = "Kevin";
   final String imageUrl = "images/Profile.png";
+  String teacherId = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTeacherId(); // Fetch teacherId when widget initializes
+  }
+
+  Future<void> fetchTeacherId() async {
+    String email = DataUser().email; // Get teacher's email
+    UserRepo userRepo = UserRepo();
+    String id = await userRepo.getTeacherIdbyEmail(email);
+    setState(() {
+      teacherId = id;
+    });
+  }
 
   final List<String> imageList = [
     'images/Baazar.png',
@@ -162,35 +185,35 @@ class HomepageTeacher extends StatelessWidget {
                   icon: Image.asset(
                       'images/CalendarButtonWhite.png'), // Replace with your home icon asset
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //           builder: (context) => FeedbackTeacher()),
-                //     );
-                //   },
-                //   icon: Image.asset(
-                //       'images/FeedbackWhite.png'), // Replace with your schedule icon asset
-                // ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => FeedbackTeacher(teacherId: teacherId)),
+                    );
+                  },
+                  icon: Image.asset(
+                      'images/FeedbackWhite.png'), // Replace with your schedule icon asset
+                ),
                 IconButton(
                   onPressed: () {
                     // Action for notification button
                   },
                   icon: Image.asset(
-                      'images/BigHomeWhite.png'), // Replace with your notification icon asset
+                      'images/HomeButtonWhite.png'), // Replace with your notification icon asset
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //           builder: (context) => NotificationTeacher()),
-                //     );
-                //   },
-                //   icon: Image.asset(
-                //       'images/ScheduleButtonWhite.png'), // Replace with your profile icon asset
-                // ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => NotificationTeacher()),
+                    );
+                  },
+                  icon: Image.asset(
+                      'images/ScheduleButtonWhite.png'), // Replace with your profile icon asset
+                ),
                 IconButton(
                   onPressed: () {
                     Navigator.push(

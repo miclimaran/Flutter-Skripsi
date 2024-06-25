@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:sekolah_app/Model/DataUser.dart';
 import 'package:sekolah_app/Teacher%20Android/HomepageTeacher.dart';
 import 'package:sekolah_app/Model/UserRepo.dart';
-import 'package:sekolah_app/StudentAndroid/LogInPage.dart';
-
-void main() {
-  runApp(AbsenTeacher());
-}
 
 class AbsenTeacher extends StatelessWidget {
   @override
@@ -45,7 +40,6 @@ class _AttendanceContentState extends State<AttendanceContent> {
   UserRepo userRepo = UserRepo();
   String classname = '';
 
-
   String getFormattedDate() {
     DateTime now = DateTime.now();
     String formattedDate = "${now.day}-${now.month}-${now.year}";
@@ -81,15 +75,13 @@ class _AttendanceContentState extends State<AttendanceContent> {
     });
   }
 
-    Future<void> fetchClassforTeacher(String email) async {
+  Future<void> fetchClassforTeacher(String email) async {
     UserRepo userRepo = UserRepo();
     String classNames = await userRepo.getClassTeacherbyEmail(email);
     setState(() {
       classname = classNames;
     });
   }
-
-
 
   Future<void> storeAttendanceData() async {
     String formattedDate = getFormattedDate();
@@ -98,13 +90,13 @@ class _AttendanceContentState extends State<AttendanceContent> {
       for (var entry in attendance.entries) {
         String studentName = entry.key;
         String studentId = await userRepo.getStudentIdbyName(studentName);
-        print(studentId);
         bool status = entry.value;
         String attendanceStatus = status ? 'Masuk' : 'Absen';
 
         await UserRepo().storeAttendance(formattedDate, attendanceStatus, studentId, teacherId);
       }
 
+      // Show dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -116,7 +108,11 @@ class _AttendanceContentState extends State<AttendanceContent> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  // Navigate back to HomepageTeacher
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomepageTeacher()),
+                  );
                 },
                 child: Text('OK'),
               ),
@@ -153,7 +149,6 @@ class _AttendanceContentState extends State<AttendanceContent> {
                 'Kelas Anda: ${classname}',
                 style: TextStyle(fontSize: 12),
               ),
-
             ],
           ),
           SizedBox(height: 20),
@@ -202,10 +197,13 @@ class _AttendanceContentState extends State<AttendanceContent> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.blue), // Set the button color
+              ),
               onPressed: () {
                 storeAttendanceData();
               },
-              child: Text('Submit Attendance'),
+              child: Text('Submit Attendance', style: TextStyle(color: Colors.white)),
             ),
           ],
         ],

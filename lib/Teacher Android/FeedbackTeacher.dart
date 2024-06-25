@@ -1,366 +1,154 @@
-// import 'package:flutter/material.dart';
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:sekolah_app/Model/DataUser.dart';
-// import 'package:sekolah_app/Model/UserRepo.dart';
-// import 'package:sekolah_app/Teacher%20Android/HomepageTeacher.dart';
-
-// // void main() {
-// //   runApp(FeedbackTeacher());
-// // }
-
-// // class FeedbackTeacher extends StatefulWidget {
-// //   @override
-// //   _FeedbackTeacherState createState() => _FeedbackTeacherState();
-// // }
-
-// // class _FeedbackTeacherState extends State<FeedbackTeacher> {
-// //   late List<String> feedbackList; // Change the type to List<String>
-
-// //   @override
-// //   void initState() {
-// //     super.initState();
-// //     // Initialize the feedbackList
-// //     feedbackList = [];
-
-// //     // Fetch feedback data when the widget is created
-// //     fetchFeedbackData();
-// //   }
-
-// //   Future<void> fetchFeedbackData() async {
-// //     try {
-// //       // Get a reference to the Firestore instance
-// //       FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-// //       // Reference to the 'Feedback' collection
-// //       CollectionReference feedbackCollection = firestore.collection('Feedback');
-
-// //       // Get the documents from the collection
-// //       QuerySnapshot querySnapshot = await feedbackCollection.get();
-
-// //       // Extract data from documents and update the state
-// //       setState(() {
-// //         feedbackList = querySnapshot.docs.map((doc) => doc.data()['feedback'] as String).toList();
-// //       });
-// //     } catch (e) {
-// //       // Handle errors here
-// //       print('Error fetching feedback data: $e');
-// //     }
-// //   }
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     String teacherEmail = DataUser().email;
-
-// //     return MaterialApp(
-// //       title: 'Feedback Viewer',
-// //       theme: ThemeData(
-// //         primarySwatch: Colors.blue,
-// //       ),
-// //       home: Scaffold(
-// //         appBar: AppBar(
-// //           title: Text('Feedback Viewer'),
-// //           leading: IconButton(
-// //             icon: Icon(Icons.arrow_back),
-// //             onPressed: () {
-// //               Navigator.push(
-// //                 context,
-// //                 MaterialPageRoute(builder: (context) => HomepageTeacher()),
-// //               );
-// //             },
-// //           ),
-// //         ),
-// //         body: FutureBuilder<List<String>>(
-// //           future: fetchAttendance(),
-// //           builder: (context, snapshot) {
-// //             if (snapshot.connectionState == ConnectionState.waiting) {
-// //               return CircularProgressIndicator();
-// //             } else if (snapshot.hasError) {
-// //               return Text('Error: ${snapshot.error}');
-// //             } else {
-// //               return ListView.builder(
-// //                 itemCount: snapshot.data?.length ?? 0,
-// //                 itemBuilder: (context, index) {
-// //                   return FeedbackBox(
-// //                     name: 'Unknown', // You may need to modify this based on your use case
-// //                     date: '', // You may need to modify this based on your use case
-// //                     feedback: snapshot.data?[index] ?? 'No feedback available',
-// //                   );
-// //                 },
-// //               );
-// //             }
-// //           },
-// //         ),
-// //       ),
-// //     );
-// //   }
-
-// //   Future<List<String>> fetchAttendance() async {
-// //     try {
-// //       // Simulating the data fetching process
-// //       // Replace this with the actual logic to fetch student details
-// //       UserRepo userRepo = UserRepo();
-// //       String teacherEmail = DataUser().email;
-// //       List<String> studentDetails = await userRepo.getAllAttendanceDetails(teacherEmail);
-// //       return studentDetails;
-// //     } catch (e) {
-// //       // Handle errors here
-// //       print('Error fetching attendance data: $e');
-// //       return [];
-// //     }
-// //   }
-// // }
-
-// // class FeedbackBox extends StatelessWidget {
-// //   final String name;
-// //   final String date;
-// //   final String feedback;
-
-// //   FeedbackBox({
-// //     required this.name,
-// //     required this.date,
-// //     required this.feedback,
-// //   });
-
-// //   @override
-// //   Widget build(BuildContext context) {
-// //     return Card(
-// //       margin: EdgeInsets.all(10),
-// //       color: Color(0xFF3D73EB),
-// //       child: Padding(
-// //         padding: EdgeInsets.all(10),
-// //         child: Column(
-// //           crossAxisAlignment: CrossAxisAlignment.start,
-// //           children: [
-// //             Row(
-// //               children: [
-// //                 CircleAvatar(
-// //                   backgroundImage: AssetImage('Profile.png'),
-// //                   radius: 25,
-// //                 ),
-// //                 SizedBox(width: 10),
-// //                 Text(
-// //                   name,
-// //                   style: TextStyle(
-// //                     fontSize: 15,
-// //                     fontWeight: FontWeight.bold,
-// //                     color: Color(0xFFFFFFFF),
-// //                   ),
-// //                 ),
-// //                 SizedBox(width: 10),
-// //                 Text(
-// //                   date,
-// //                   style: TextStyle(
-// //                     fontSize: 15,
-// //                     fontWeight: FontWeight.bold,
-// //                     color: Color(0xFFFFFFFF),
-// //                   ),
-// //                 ),
-// //               ],
-// //             ),
-// //             SizedBox(height: 10),
-// //             Text(
-// //               feedback,
-// //               style: TextStyle(
-// //                 fontSize: 12,
-// //                 color: Color(0xFFFFFFFF),
-// //               ),
-// //             ),
-// //           ],
-// //         ),
-// //       ),
-// //     );
-// //   }
-// // }
-
-
-// void main() {
-//   runApp(FeedbackTeacher());
-// }
-
-// class FeedbackTeacher extends StatefulWidget {
-//   @override
-//   _FeedbackTeacherState createState() => _FeedbackTeacherState();
-// }
-
-// class _FeedbackTeacherState extends State<FeedbackTeacher> {
-
-// List<String> detailStudent = [];
-// String teacherEmail = DataUser().email;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     fetchStudentDetails();
-//   }
-
-//   Future<void> fetchStudentDetails() async {
-//     // Simulating the data fetching process
-//     // Replace this with the actual logic to fetch student details
-//     UserRepo userRepo = UserRepo();
-//     List<String> studentDetails = await userRepo.getAllAttendanceDetails(teacherEmail);
-
-//     // Simulated data
-//     // List<String> studentDetails = [
-//     //   'Name: Michael Limaran',
-//     //   'Email: Michael.limaran@student.ac.id',
-//     //   'Role: Student',
-//     //   'ID: STD001',
-//     //   'Class: XA1',
-//     // ];
-
-//     setState(() {
-//       detailStudent = studentDetails;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Student Details'),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.stretch,
-//           children: [
-//             for (var detail in detailStudent)
-//               Card(
-//                 elevation: 4.0,
-//                 margin: EdgeInsets.only(bottom: 12.0),
-//                 child: ListTile(
-//                   leading: Icon(
-//                     Icons.person,
-//                     color: Colors.blue,
-//                   ),
-//                   title: Text(
-//                     detail,
-//                     style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-//                   ),
-//                 ),
-//               ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
 import 'package:flutter/material.dart';
-import 'package:sekolah_app/Teacher%20Android/HomepageTeacher.dart';
-
-void main() {
-  runApp(FeedbackTeacher());
-}
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sekolah_app/Model/FeedbackModel.dart'; // Adjust the path as per your project structure
 
 class FeedbackTeacher extends StatelessWidget {
-  final List<Map<String, dynamic>> feedbackList = [
-    {
-      'name': 'Michael',
-      'image': 'images/Baazar.png',
-      'feedback': 'Sudah sangat baik, tetapi ada banyak yang perlu diperhatikan.'
-    },
-    {
-      'name': 'Limaran',
-      'image': 'images/Baazar2.png',
-      'feedback': 'Saya ada kurang mengerti disaat bapak mengajarkan materi turunan.'
-    },
-    {
-      'name': 'Charlie',
-      'image': 'images/Baazar2.png',
-      'feedback': 'Untuk pembahasannya sudah baik, tetapi untuk ulangannya tidak sesuai dengan pembahasan yang bapak kasih'
-    },
-    {
-      'name': 'Chaplin',
-      'image': 'images/Baazar2.png',
-      'feedback': 'Saya ada kurang mengerti disaat bapak mengajarkan materi, dikarenakan sangat cepat.'
-    },
-  ];
+  final String teacherId; // Assuming you'll pass teacherId to filter feedbacks
+  final CollectionReference feedbackCollection =
+      FirebaseFirestore.instance.collection('Feedback');
+
+  FeedbackTeacher({required this.teacherId});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Feedback Viewer',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    DateTime thirtyDaysAgo = DateTime.now().subtract(Duration(days: 100));
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Feedback Viewer'),
       ),
-      initialRoute: '/',
-      onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case '/':
-            return MaterialPageRoute(builder: (_) => FeedbackTeacher());
-          default:
-            return null;
-        }
-      },
-      home: Scaffold(
-        appBar: AppBar(title: Text('Feedback Viewer'),leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomepageTeacher()),
-            );
-          },
-        ),),
-        body: ListView.builder(
-          itemCount: feedbackList.length,
-          itemBuilder: (context, index) {
-            return FeedbackBox(
-              name: feedbackList[index]['name'],
-              image: feedbackList[index]['image'],
-              feedback: feedbackList[index]['feedback'],
-            );
-          },
-        ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: feedbackCollection
+            .where('teacherId', isEqualTo: teacherId)
+            .where('date', isGreaterThanOrEqualTo: DateFormat('dd-MM-yyyy').format(thirtyDaysAgo))
+            .orderBy('date', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(child: Text('No feedback available in the last 30 days.'));
+          }
+
+          List<FeedbackModel> feedbackList = snapshot.data!.docs
+              .map((doc) => FeedbackModel.fromMap(doc.data() as Map<String, dynamic>))
+              .toList();
+
+          return ListView.builder(
+            itemCount: feedbackList.length,
+            itemBuilder: (context, index) {
+              return FeedbackCard(
+                date: feedbackList[index].date,
+                feedback: feedbackList[index].feedback,
+                studentId: feedbackList[index].studentId,
+              );
+            },
+          );
+        },
       ),
     );
   }
 }
 
-class FeedbackBox extends StatelessWidget {
-  final String name;
-  final String image;
+class FeedbackCard extends StatelessWidget {
+  final String date;
   final String feedback;
+  final String studentId;
 
-  FeedbackBox({required this.name, required this.image, required this.feedback});
+  FeedbackCard({
+    required this.date,
+    required this.feedback,
+    required this.studentId,
+  });
+
+  Future<String> getStudentNamebyIdss(String id) async {
+    String studentName = "";
+
+    print(id);
+
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('id', isEqualTo: id)
+          .get();
+
+      for (QueryDocumentSnapshot<Map<String, dynamic>> user in snapshot.docs) {
+        studentName = user['name'] as String;
+      }
+    } catch (e) {
+      print('Error fetching student name: $e');
+    }
+
+    print(studentName);
+
+    return studentName;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
       margin: EdgeInsets.all(10),
-      color: Color(0xFF3D73EB),
+      decoration: BoxDecoration(
+        color: Colors.blue,
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage(image),
-                  radius: 25,
-                ),
-                SizedBox(width: 10),
-                Text(
-                  name,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFFFFFFFF)
-                  ),
-                ),
-              ],
+            Text(
+              '$date',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             SizedBox(height: 10),
             Text(
-                  feedback,
+              'Feedback: $feedback',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 10),
+            FutureBuilder<String>(
+              future: getStudentNamebyIdss(studentId),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text(
+                    'Loading student name...',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return Text(
+                    'Error loading student name',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                    ),
+                  );
+                }
+                return Text(
+                  'Student Name: ${snapshot.data}',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Color(0xFFFFFFFF)
+                    color: Colors.white,
                   ),
-                ),
+                );
+              },
+            ),
           ],
         ),
       ),
