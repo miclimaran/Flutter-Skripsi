@@ -39,6 +39,7 @@ class _AttendanceContentState extends State<AttendanceContent> {
   String teacherEmail = DataUser().email;
   UserRepo userRepo = UserRepo();
   String classname = '';
+  String _errorMessage = '';
 
   String getFormattedDate() {
     DateTime now = DateTime.now();
@@ -84,6 +85,13 @@ class _AttendanceContentState extends State<AttendanceContent> {
   }
 
   Future<void> storeAttendanceData() async {
+    if (attendance.isEmpty) {
+      setState(() {
+        _errorMessage = 'Please select at least one student.';
+      });
+      return;
+    }
+
     String formattedDate = getFormattedDate();
     String teacherId = await userRepo.getTeacherIdbyEmail(teacherEmail);
     try {
@@ -159,6 +167,7 @@ class _AttendanceContentState extends State<AttendanceContent> {
               setState(() {
                 selectedClass = newValue;
                 fetchStudentsForClass(newValue!);
+                _errorMessage = '';  // Reset error message when a class is selected
               });
             },
             items: classesList.map((className) {
@@ -188,6 +197,7 @@ class _AttendanceContentState extends State<AttendanceContent> {
                       onChanged: (bool? value) {
                         setState(() {
                           attendance[student] = value!;
+                          _errorMessage = '';  // Reset error message when a student is selected
                         });
                       },
                     ),
@@ -205,6 +215,12 @@ class _AttendanceContentState extends State<AttendanceContent> {
               },
               child: Text('Submit Attendance', style: TextStyle(color: Colors.white)),
             ),
+            if (_errorMessage.isNotEmpty)
+              Text(
+                _errorMessage,
+                style: TextStyle(color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
           ],
         ],
       ),

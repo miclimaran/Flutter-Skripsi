@@ -9,17 +9,22 @@ void main() {
   ));
 }
 
-class CreateNewClassPage extends StatelessWidget {
+class CreateNewClassPage extends StatefulWidget {
+  @override
+  _CreateNewClassPageState createState() => _CreateNewClassPageState();
+}
+
+class _CreateNewClassPageState extends State<CreateNewClassPage> {
   final TextEditingController classNameController = TextEditingController();
   final TextEditingController waliKelasController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> createClass(BuildContext context) async {
-    String className = classNameController.text.trim();
-    String waliKelas = waliKelasController.text.trim();
+    if (_formKey.currentState?.validate() ?? false) {
+      String className = classNameController.text.trim();
+      String waliKelas = waliKelasController.text.trim();
 
-    if (className.isNotEmpty && waliKelas.isNotEmpty) {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
-
       CollectionReference classes = firestore.collection('classes');
 
       await classes.add({
@@ -55,8 +60,6 @@ class CreateNewClassPage extends StatelessWidget {
           );
         },
       );
-    } else {
-      print('Please enter both class name and Teacher Id');
     }
   }
 
@@ -68,36 +71,54 @@ class CreateNewClassPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            TextFormField(
-              controller: classNameController,
-              decoration: InputDecoration(
-                labelText: 'Nama Kelas',
-                hintText: 'Enter the class name',
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              TextFormField(
+                controller: classNameController,
+                decoration: InputDecoration(
+                  labelText: 'Nama Kelas',
+                  hintText: 'Enter the class name',
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Class Name is required.';
+                  }
+                  return null;
+                },
               ),
-            ),
-            SizedBox(height: 20.0),
-            TextFormField(
-              controller: waliKelasController,
-              decoration: InputDecoration(
-                labelText: 'Homeroom Teacher Id',
-                hintText: 'Enter the Homeroom Teacher Id',
+              SizedBox(height: 20.0),
+              TextFormField(
+                controller: waliKelasController,
+                decoration: InputDecoration(
+                  labelText: 'Homeroom Teacher Id',
+                  hintText: 'Enter the Homeroom Teacher Id',
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Homeroom Teacher ID is required.';
+                  }
+                  if (!value.startsWith('TCH')) {
+                    return 'Homeroom Teacher ID must start with "TCH".';
+                  }
+                  return null;
+                },
               ),
-            ),
-            SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                createClass(context); // Pass the context to the function
-              },
-              child: Text('Create Class'),
-              style: ElevatedButton.styleFrom(
-                primary: Color(0xFF3D73EB),
-                onPrimary: Colors.white,
+              SizedBox(height: 20.0),
+              ElevatedButton(
+                onPressed: () {
+                  createClass(context); // Pass the context to the function
+                },
+                child: Text('Create Class'),
+                style: ElevatedButton.styleFrom(
+                  primary: Color(0xFF3D73EB),
+                  onPrimary: Colors.white,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

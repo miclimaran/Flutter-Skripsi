@@ -35,13 +35,14 @@ class LoginPage extends StatefulWidget {
 
 String emailName = '';
 
-
 class LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
   bool _isSigning = false;
   final FirebaseAuthService _auth = FirebaseAuthService();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  String _errorMessage = '';
 
   @override
   void dispose() {
@@ -58,213 +59,178 @@ class LoginPageState extends State<LoginPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              SizedBox(height: 20.0),
-              Image.asset(
-                'images/SMAN112Logo.png',
-                height: 150,
-                width: 150,
-              ),
-              SizedBox(height: 20.0),
-              Text(
-                'Log In to SMAN 112',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                SizedBox(height: 20.0),
+                Image.asset(
+                  'images/SMAN112Logo.png',
+                  height: 150,
+                  width: 150,
                 ),
-              ),
-              SizedBox(height: 20.0),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 20.0),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  // Checkbox(
-                  //   value: _rememberMe,
-                  //   onChanged: (bool? value) {
-                  //     setState(() {
-                  //       _rememberMe = value ?? false;
-                  //     });
-                  //   },
-                  // ),
-                  // Text(
-                  //   'Remember Me',
-                  //   style: TextStyle(
-                  //     fontFamily: 'Montserrat',
-                  //   ),
-                  // ),
-                  Spacer(),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     Navigator.pushNamed(context, '/verificationEmail');
-                  //     print('Forgot Password button pressed');
-                  //   },
-                  //   child: Text(
-                  //     'Forgot Password?',
-                  //     style: TextStyle(
-                  //       fontFamily: 'Montserrat',
-                  //       color: Color(0xFF8F8F8F),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-              SizedBox(height: 20.0),
-              ElevatedButton(
-                onPressed: () {
-                DataUser().email = _emailController.text; // Save the email in the singleton class
-                DataUser().name = getNameEmail(_emailController.text);
-                  _signIn();
-                },
-                child: Text(
-                  'Log In',
+                SizedBox(height: 20.0),
+                Text(
+                  'Log In to SMAN 112',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Montserrat',
-                    color: Color(0xFFFFFFFF),
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6491EE),
-                  onPrimary: Colors.white,
-                  elevation: 5,
+                SizedBox(height: 20.0),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Email must be entered';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-              SizedBox(height: 20.0),
-            ],
+                SizedBox(height: 20.0),
+                TextFormField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Password must be entered';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20.0),
+                ElevatedButton(
+                  onPressed: () {
+                    DataUser().email = _emailController.text; // Save the email in the singleton class
+                    DataUser().name = getNameEmail(_emailController.text);
+                    _signIn();
+                  },
+                  child: Text(
+                    'Log In',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      color: Color(0xFFFFFFFF),
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFF6491EE),
+                    onPrimary: Colors.white,
+                    elevation: 5,
+                  ),
+                ),
+                SizedBox(height: 20.0),
+                if (_errorMessage.isNotEmpty)
+                  Text(
+                    _errorMessage,
+                    style: TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-
   String emailType = '';
 
   void _signIn() async {
     setState(() {
       _isSigning = true;
-    }); 
-    String email = _emailController.text;
-    String password = _passwordController.text;
-
-    User? user = await _auth.signInWithEmailAndPassword(email, password);
-
-    setState(() {
-      _isSigning = false;
     });
 
-    if (user != null) {
-      getNameEmail(email);
-      getRoleFromEmail(email);
-      emailName = email;
-      // Pass the email as an argument when navigating to the next page
-      // if (emailType == 'student') {
-      //   Navigator.pushNamed(context, "/Homepage2", arguments: emailName);
-      // } else if (emailType == 'teacher') {
-      //   Navigator.pushNamed(context, "/HomepageTeacher", arguments: emailName);
-      // } else if (emailType == 'admin') {
-      //   Navigator.pushNamed(context, "/HomepageAdmin", arguments: emailName);
-      // }
-    } 
+    if (_formKey.currentState?.validate() ?? false) {
+      String email = _emailController.text;
+      String password = _passwordController.text;
+
+      try {
+        User? user = await _auth.signInWithEmailAndPassword(email, password);
+
+        setState(() {
+          _isSigning = false;
+        });
+
+        if (user != null) {
+          getNameEmail(email);
+          getRoleFromEmail(email);
+          emailName = email;
+        }
+      } catch (e) {
+        setState(() {
+          _errorMessage = 'Incorrect email or password.';
+          _isSigning = false;
+        });
+      }
+    } else {
+      setState(() {
+        _isSigning = false;
+      });
+    }
   }
 
-// void getRoleFromEmail(String email) {
-//   if (email.endsWith('@student.ac.id')) {
-//     emailType = 'student';
-//     Navigator.pushNamed(context, "/Homepage2", arguments: emailName);
-//   } else if (email.endsWith('@teacher.ac.id')) {
-//     emailType = 'teacher';
-//     Navigator.pushNamed(context, "/HomepageTeacher", arguments: emailName);
-//   } else if (email.endsWith('@admin.ac.id')) {
-//     emailType = 'admin';
-//     Navigator.pushNamed(context, "/HomepageAdmin", arguments: emailName);
-//   } else {
-//       showToast(message: "Some error occurred");
-//     }
-// }
-
-void getRoleFromEmail(String email) {
+  void getRoleFromEmail(String email) {
     if (email.endsWith('@student.ac.id')) {
       emailType = 'student';
-      // Navigator.pushNamed(context, "/Homepage2", arguments: emailName);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => Homepage2()),
       );
     } else if (email.endsWith('@teacher.ac.id')) {
       emailType = 'teacher';
-      // Navigator.pushNamed(context, "/HomepageTeacher", arguments: emailName);
-      // Navigator.of(context, rootNavigator: true)
-      //     .pushNamed("/", arguments: emailName);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomepageTeacher()),
       );
-      // print("disini");
     } else if (email.endsWith('@admin.ac.id')) {
       emailType = 'admin';
-      // Navigator.pushNamed(context, "/HomepageAdmin", arguments: emailName);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomepageAdmin()),
       );
     } else {
-      showToast(message: "Some error occurred");
+      setState(() {
+        _errorMessage = 'Some error occurred';
+      });
     }
   }
 
+  String getNameEmail(String email) {
+    List<String> parts = email.split('@');
 
-String getNameEmail(String email) {
-  List<String> parts = email.split('@');
+    // Check if the email has a valid format
+    if (parts.length >= 2) {
+      String namePart = parts[0];
+      List<String> nameParts = namePart.split('.');
 
-  // Check if the email has a valid format
-  if (parts.length >= 2) {
-    String namePart = parts[0];
-    List<String> nameParts = namePart.split('.');
+      // Capitalize each part of the name
+      nameParts = nameParts.map((part) => capitalize(part)).toList();
 
-    // Capitalize each part of the name
-    nameParts = nameParts.map((part) => capitalize(part)).toList();
+      // Join the parts to form the full name
+      String fullName = nameParts.join(' ');
 
-    // Join the parts to form the full name
-    String fullName = nameParts.join(' ');
+      return fullName;
+    } else {
+      // Handle invalid email format
+      return 'InvalidEmailFormat';
+    }
+  }
 
-    return fullName;
-  } else {
-    // Handle invalid email format
-    return 'InvalidEmailFormat';
+  // Capitalize the first letter of a string
+  String capitalize(String input) {
+    if (input.isEmpty) return input;
+
+    return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
 }
-
-// Capitalize the first letter of a string
-String capitalize(String input) {
-  if (input.isEmpty) return input;
-
-  return input[0].toUpperCase() + input.substring(1).toLowerCase();
-}
-
-
-
-
-
-}
-
-
-
-
